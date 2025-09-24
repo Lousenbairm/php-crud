@@ -1,19 +1,17 @@
 <?php
+session_start();
 require_once("../src/database.php");
 $pdo = connectDB();
 require_once("./read.php");
-?>
-<?php
-    session_start();
 
-    if(isset($_SESSION['query_status'])){
-        $status = $_SESSION['query_status'];
-        
-        unset($_SESSION['query_status']);
+if(isset($_SESSION['query_status'])){
+    $status = $_SESSION['query_status'];
+    
+    unset($_SESSION['query_status']);
 
-    } else {
-        $status = '';
-    }
+} else {
+    $status = '';
+}
 
 ?>
 
@@ -29,8 +27,6 @@ require_once("./read.php");
     <div class="form-container">
         <h1>Customer Registration System</h1>
         <p>Please fill in the details below to add new customer.</p>
-
-        <button><a href="testing.php">Testing Ground</a></button>
         
         <form action="store.php" method="post">
             <div class="form-grid">
