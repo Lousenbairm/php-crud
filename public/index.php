@@ -73,7 +73,20 @@ $offset = $paginationData['offset'];
             <input type="submit" class="submit-btn"/>
             
             <div class="customer-listing">
-                <h2>Customer Record</h2>
+                <div class="listing-heading">
+                    <h2>Customer Record</h2>
+                    <form action="index.php#pagination-tab" method="POST" class="mb-3">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                name="search" 
+                                class="form-control" 
+                                placeholder="Search for customers..." 
+                            >
+                            <button class="btn btn-primary" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
                 <table>
                     <thead>
                         <th>#</th>

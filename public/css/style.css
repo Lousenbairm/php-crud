@@ -174,3 +174,32 @@ td a.delete-link {
   gap: 5rem;
   margin: 1rem 1rem 0 0;
 }
+
+.listing-heading {
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.listing-heading h2 {
+  margin: 0;
+}
+
+.listing-heading form {
+  margin-bottom: 0 !important;
+  width: 50%;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  width: 30%;
+}
+
+.input-group button {
+  width: 15%;
+}
