@@ -3,17 +3,46 @@
 // $pdo=connectDB();
 //Can pass through require in index
 
-$prepQuery='
-    SELECT * FROM `crud_proj`.`customer` WHERE deleted_at IS NULL ORDER BY updated_at DESC;
-';
 
-try {
+function getPagination(PDO $pdo) {
+    
+    $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+    $rowCount = 10;
+    $offset = ($currentPage * $rowCount)-$rowCount;
+    
+    
+    $prepCountQuery='
+    SELECT COUNT(*) FROM `crud_proj`.`customer`;
+    ';
 
-    $queryData = $pdo->prepare($prepQuery);
-    $queryData->execute();
-    $customersData = $queryData->fetchAll(PDO::FETCH_ASSOC);
+    $prepQuery='
+    SELECT * FROM `crud_proj`.`customer` WHERE deleted_at IS NULL ORDER BY updated_at DESC LIMIT :limit OFFSET :offset;
+    ';
+    
+    try {
+        
+        $queryData = $pdo->prepare($prepQuery);
+        $queryData->bindParam(':limit', $rowCount, PDO::PARAM_INT);
+        $queryData->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $queryData->execute();
+        $customersData = $queryData->fetchAll(PDO::FETCH_ASSOC);
 
-} catch(PDOException $e) {
-    echo "Reading failed," . $e->getMessage();
+        $queryItemCount = $pdo->prepare($prepCountQuery);
+        $queryItemCount->execute();
+        $itemCount = $queryItemCount->fetchColumn();
+        
+        
+        return [
+            'customers' => $customersData,
+            'currentPage' => $currentPage,
+            'itemCount' => $itemCount,
+            'totalPage' => ceil($itemCount/$rowCount),
+            'offset' => $offset
+        ];
+
+    } catch(PDOException $e) {
+        echo "Reading failed," . $e->getMessage();
+    }
 }
+
 ?>

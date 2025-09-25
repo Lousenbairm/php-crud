@@ -13,6 +13,11 @@ if(isset($_SESSION['query_status'])){
     $status = '';
 }
 
+$paginationData = getPagination($pdo);
+$currentPage = $paginationData['currentPage'];
+$totalPage = $paginationData['totalPage'];
+$offset = $paginationData['offset'];
+
 ?>
 
 <!DOCTYPE html>
@@ -80,8 +85,8 @@ if(isset($_SESSION['query_status'])){
                     </thead>
                     <tbody>
                         <?php
-                    $index = 1;
-                    foreach($customersData as $customer):
+                    $index = $offset+1;
+                    foreach($paginationData['customers'] as $customer):
                         ?>
                 <tr>
                     <td><?= $index ?></td>
@@ -101,6 +106,26 @@ if(isset($_SESSION['query_status'])){
                 ?>
             </tbody>
         </table>
+        <div class="pagination-button" id="pagination-tab">
+            <?php
+
+                if($currentPage < $totalPage) {
+                    $nextPage = $currentPage + 1;
+                    echo "<a href='index.php?page={$nextPage}#pagination-tab'>Next &raquo;</a>";
+                } else {
+                    echo "<span class='disabled'>Next &raquo;</span>";
+                }
+
+                echo "<span>{$currentPage}/{$totalPage}</span>";
+
+                if($currentPage > 1) {
+                    $previosPage = $currentPage - 1;
+                    echo "<a href='index.php?page={$previosPage}#pagination-tab'>&laquo; Previous</a>";
+                } else {
+                    echo "<span class='disabled'>&laquo; Previous</span>";
+                }
+?>
+        </div>
     </div>
     <div class="status"><?= $status ?></div>
     

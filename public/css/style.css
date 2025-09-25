@@ -167,3 +167,10 @@ td a.delete-link {
 .form-group input[readonly] {
   background-color: rgb(189, 189, 189);
 }
+
+.pagination-button {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 5rem;
+  margin: 1rem 1rem 0 0;
+}
