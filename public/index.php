@@ -13,7 +13,16 @@ if(isset($_SESSION['query_status'])){
     $status = '';
 }
 
-$paginationData = getPagination($pdo);
+
+$searchTerm = '';
+if (!empty($_POST['search'])) {
+    $searchTerm = trim($_POST['search']);
+    
+} elseif (!empty($_GET['search'])) {
+    $searchTerm = trim($_GET['search']);
+}
+
+$paginationData = getPagination($pdo, $searchTerm);
 $currentPage = $paginationData['currentPage'];
 $totalPage = $paginationData['totalPage'];
 $offset = $paginationData['offset'];
@@ -70,18 +79,20 @@ $offset = $paginationData['offset'];
                 
                 
             </div> 
-            <input type="submit" class="submit-btn"/>
+            <input type="submit" class="submit-btn" name="submit-data"/>
+        </form>
             
             <div class="customer-listing">
                 <div class="listing-heading">
                     <h2>Customer Record</h2>
-                    <form action="index.php#pagination-tab" method="POST" class="mb-3">
+                    <form action="index.php#pagination-tab" method="POST">
                         <div class="input-group">
                             <input 
                                 type="text" 
                                 name="search" 
                                 class="form-control" 
                                 placeholder="Search for customers..." 
+                                value="<?php echo $searchTerm; ?>"
                             >
                             <button class="btn btn-primary" type="submit">Search</button>
                         </div>
@@ -93,6 +104,7 @@ $offset = $paginationData['offset'];
                         <th>Name</th>
                         <th>NRIC</th>
                         <th>DOB</th>
+                        <th>Mobile No</th>
                         <th>Address</th>
                         <th></th>
                     </thead>
@@ -106,6 +118,7 @@ $offset = $paginationData['offset'];
                     <td><?= $customer['name']?></td>
                     <td><?= $customer['nric']?></td>
                     <td><?= $customer['dob']?></td>
+                    <td><?= $customer['mobile_no']?></td>
                     <td><?= $customer['address']?></td>
                     <td>
                         <a href='delete.php?nric=<?=$customer['nric'] ?>' class="delete-link"> Delete </a>
@@ -122,9 +135,11 @@ $offset = $paginationData['offset'];
         <div class="pagination-button" id="pagination-tab">
             <?php
 
+            $searchQueryString = !empty($searchTerm) ? '&search=' . urlencode($searchTerm) : '';
+
                 if($currentPage < $totalPage) {
                     $nextPage = $currentPage + 1;
-                    echo "<a href='index.php?page={$nextPage}#pagination-tab'>Next &raquo;</a>";
+                    echo "<a href='index.php?page={$nextPage}{$searchQueryString}#pagination-tab'>Next &raquo;</a>";
                 } else {
                     echo "<span class='disabled'>Next &raquo;</span>";
                 }
@@ -133,7 +148,7 @@ $offset = $paginationData['offset'];
 
                 if($currentPage > 1) {
                     $previosPage = $currentPage - 1;
-                    echo "<a href='index.php?page={$previosPage}#pagination-tab'>&laquo; Previous</a>";
+                    echo "<a href='index.php?page={$previosPage}{$searchQueryString}#pagination-tab'>&laquo; Previous</a>";
                 } else {
                     echo "<span class='disabled'>&laquo; Previous</span>";
                 }

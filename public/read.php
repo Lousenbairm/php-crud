@@ -4,42 +4,41 @@
 //Can pass through require in index
 
 
-function getPagination(PDO $pdo) {
-    
+function getPagination(PDO $pdo, string $searchTerm = '') {
     $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
     $rowCount = 10;
     $offset = ($currentPage * $rowCount)-$rowCount;
-    $searchTerm = isset($_POST['search']) ? $_POST['search'] : '';
-    $searchQuery = '';
+    $baseSql = 'FROM `crud_proj`.`customer` WHERE deleted_at IS NULL ';
+    $params = [];
 
+    if (!empty($searchTerm)) {
+        $baseSql .= 'AND CONCAT_WS(" ", name, nric, dob, mobile_no, address) LIKE :search ';
+
+        $params[':search'] = '%'. $searchTerm .'%'; 
+    }
     
     $prepCountQuery='
-    SELECT COUNT(*) FROM `crud_proj`.`customer`;
-    ';
-
-    if($searchTerm) {
-
-    } else {
-
-    }
-
+    SELECT COUNT(*) '. $baseSql;
+    
     $prepQuery='
-    SELECT * FROM `crud_proj`.`customer` 
-    WHERE 1=1
-    and deleted_at IS NULL
-    ORDER BY updated_at DESC LIMIT :limit OFFSET :offset;
+    SELECT * '. $baseSql .' ORDER BY updated_at DESC LIMIT :limit OFFSET :offset;
     ';
     
     try {
         
+        
         $queryData = $pdo->prepare($prepQuery);
+        if (!empty($searchTerm)) {
+        $queryData->bindParam(':search', $params[':search'], PDO::PARAM_STR);
+
+        }
         $queryData->bindParam(':limit', $rowCount, PDO::PARAM_INT);
         $queryData->bindParam(':offset', $offset, PDO::PARAM_INT);
         $queryData->execute();
         $customersData = $queryData->fetchAll(PDO::FETCH_ASSOC);
 
         $queryItemCount = $pdo->prepare($prepCountQuery);
-        $queryItemCount->execute();
+        $queryItemCount->execute($params);
         $itemCount = $queryItemCount->fetchColumn();
         
         
@@ -48,7 +47,7 @@ function getPagination(PDO $pdo) {
             'currentPage' => $currentPage,
             'itemCount' => $itemCount,
             'totalPage' => ceil($itemCount/$rowCount),
-            'offset' => $offset
+            'offset' => $offset,
         ];
 
     } catch(PDOException $e) {

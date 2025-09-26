@@ -8,7 +8,7 @@ $prepQuery = $pdo->prepare('
 ');
 
 
-    if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['search'])) {
         $name = $_POST['name'];
         $nric = $_POST['nric'];
         $dob = $_POST['dob'];
