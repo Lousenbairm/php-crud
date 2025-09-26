@@ -9,14 +9,25 @@ function getPagination(PDO $pdo) {
     $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
     $rowCount = 10;
     $offset = ($currentPage * $rowCount)-$rowCount;
-    
+    $searchTerm = isset($_POST['search']) ? $_POST['search'] : '';
+    $searchQuery = '';
+
     
     $prepCountQuery='
     SELECT COUNT(*) FROM `crud_proj`.`customer`;
     ';
 
+    if($searchTerm) {
+
+    } else {
+
+    }
+
     $prepQuery='
-    SELECT * FROM `crud_proj`.`customer` WHERE deleted_at IS NULL ORDER BY updated_at DESC LIMIT :limit OFFSET :offset;
+    SELECT * FROM `crud_proj`.`customer` 
+    WHERE 1=1
+    and deleted_at IS NULL
+    ORDER BY updated_at DESC LIMIT :limit OFFSET :offset;
     ';
     
     try {
